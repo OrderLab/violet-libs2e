@@ -32,7 +32,7 @@
 #include "s2e-kvm.h"
 
 #ifdef CONFIG_SYMBEX
-bool g_execute_always_klee = false;
+bool g_execute_always_klee = true;
 #endif
 
 namespace s2e {

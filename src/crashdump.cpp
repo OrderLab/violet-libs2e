@@ -24,8 +24,6 @@ uintptr_t s2e_get_host_address(target_phys_addr_t paddr);
 void generate_crashdump(void);
 }
 
-#include <llvm/Support/TimeValue.h>
-
 #include <sstream>
 #include <vmi/FileProvider.h>
 #include <vmi/WindowsCrashDumpGenerator.h>
@@ -173,6 +171,7 @@ bool readGuestPhysical(void *opaque, uint64_t address, void *dest, unsigned size
 }
 
 void generate_crashdump(void) {
+    static int counter = 0;
     extern CPUX86State *env;
     uint64_t KernelNativeBase = 0x400000;
 
@@ -181,7 +180,8 @@ void generate_crashdump(void) {
     X86RegisterProvider rp(env, readX86Register, NULL);
 
     std::stringstream ss;
-    ss << "crash-" << llvm::sys::TimeValue::now().seconds() << ".dmp";
+    ss << "crash-" << counter << ".dmp";
+    ++counter;
 
     auto fp = FileSystemFileProvider::get(ss.str(), true);
     if (!fp) {
@@ -214,10 +214,13 @@ void generate_crashdump(void) {
     // uint64_t KdDebuggerDataBlock = 0x475de0 - KernelNativeBase + kdVersion.KernBase;
 
     // ntkrnlpa.exe free build
-    uint64_t KdDebuggerDataBlock = 0x46eae0 - KernelNativeBase + kdVersion.KernBase;
+    // uint64_t KdDebuggerDataBlock = 0x46eae0 - KernelNativeBase + kdVersion.KernBase;
 
     // ntkrnlpa.exe checked build
     // uint64_t KdDebuggerDataBlock = 0x004ec3f0 - KernelNativeBase + kdVersion.KernBase;
+
+    // ntoskrnl.exe free build win7pro sp1 32-bit
+    uint64_t KdDebuggerDataBlock = 0x522C28 - KernelNativeBase + kdVersion.KernBase;
 
     CONTEXT32 context;
 

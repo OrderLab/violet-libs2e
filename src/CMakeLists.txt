@@ -36,8 +36,6 @@ if(WITH_TARGET MATCHES "s2e")
                      ${KLEE_LIBRARY_DIR}/libkleaverExpr.a
                      ${KLEE_LIBRARY_DIR}/libkleeSupport.a
                      ${KLEE_LIBRARY_DIR}/libkleeBasic.a)
-    set(LIBS ${LIBS} ${VMI_LIBRARY_DIR}/libvmi.a
-                     elf)
     set(LIBS ${LIBS} memcached
                      lua
                      ${LLVM_LIBS}
@@ -48,6 +46,8 @@ if(WITH_TARGET MATCHES "s2e")
                      boost_system
                      boost_regex)
 endif()
+
+set(LIBS ${LIBS} ${VMI_LIBRARY_DIR}/libvmi.a elf ${LLVM_LIBS})
 
 set(LIBS ${LIBS} ${LIBCOROUTINE_LIBRARY_DIR}/libcoroutine.a ${FSIGCXX_LIBRARY_DIR}/libfsigc++.a ${CAPSTONE_LIB_DIR}/libcapstone.a pthread glib-2.0 bsd)
 
